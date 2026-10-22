@@ -1,0 +1,24 @@
+name: Seed demo issues
+
+# Runs on the first push in a copy of this repo (e.g. created from the template),
+# or manually from the Actions tab. Safe to re-run: existing issues are skipped.
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: write
+
+jobs:
+  seed:
+    # Don't run on every push to the original repo, its issues already exist.
+    if: github.event_name == 'workflow_dispatch' || github.repository != 'orjanberglin/ec-powerhour-demo'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: ./.github/scripts/seed-issues.sh
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
